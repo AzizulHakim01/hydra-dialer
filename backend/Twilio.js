@@ -26,6 +26,18 @@ class Twilio {
       throw error;
     }
   }
+
+  async verifyCodeAsync (to, code){
+    try{
+const data = await this.client.verify.v2.services(this.verify).verificationChecks.create({to, code});
+console.log('verify code: ',data)
+return
+    }
+    catch(error){
+      console.error('Error verifying the Code:', error);
+      throw error;
+    }
+  }
 }
 
 

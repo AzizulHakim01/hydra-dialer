@@ -9,16 +9,30 @@ const Twilio = require('./Twilio'); // Assuming Twilio.js is in the same directo
 
 const twilioInstance = new Twilio(); // Create an instance of the Twilio class
 
+//Login route
 app.get('/login', async (req, res) => {
-  console.log("Logging In ");
+  console.log("Verification Sent ");
+  const {to, username, channel} = req.body;
   try {
-    const data = await twilioInstance.sendVerifyAsync(process.env.MOBILE, 'sms');
+    const data = await twilioInstance.sendVerifyAsync(to, channel);
     res.send(data);
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send('Error sending verification');
   }
 });
+
+//Verify Route
+app.get('/verify', async (req, res)=>{
+  try {
+    console.log("verification on process: ")
+    const data = await twilioInstance.verifyCodeAsync(process.env.MOBILE, req.query.code);
+    return data;
+  } catch (error) {
+    console.error(error.message);
+    return res.status(400).send({"error": "Invalid request."})
+  }
+})
 
 // Start the server
 app.listen(port, () => {
