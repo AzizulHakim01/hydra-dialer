@@ -26,10 +26,11 @@ app.post('/login', async (req, res) => {
 });
 
 //Verify Route
-app.get('/verify', async (req, res)=>{
+app.post('/verify', async (req, res)=>{
   try {
     console.log("verification on process: ")
-    const data = await twilioInstance.verifyCodeAsync(process.env.MOBILE, req.query.code);
+    const {to, code} = req.body;
+    const data = await twilioInstance.verifyCodeAsync(to, code);
     return data;
   } catch (error) {
     console.error(error.message);
