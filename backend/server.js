@@ -31,7 +31,7 @@ app.post('/verify', async (req, res)=>{
     console.log("verification on process: ")
     const {to, code} = req.body;
     const data = await twilioInstance.verifyCodeAsync(to, code);
-    return data;
+    res.send(data);
   } catch (error) {
     console.error(error.message);
     return res.status(400).send({"error": "Invalid request."})

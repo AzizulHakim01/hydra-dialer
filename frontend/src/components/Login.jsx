@@ -2,9 +2,15 @@ import PropTypes from "prop-types"; // Import PropTypes
 import { Grid, Header, Segment, Form, Button } from "semantic-ui-react";
 
 function Login({
-  user: { username, mobileNumber, verificationCode, verficationSent, sentVerificationCode },
+  user: {
+    username,
+    mobileNumber,
+    verificationCode,
+    verificationSent,  },
   setUser,
   sendSmsCode,
+  sentVerificationCode,
+
 }) {
   function populateFilds(event, data) {
     setUser((draft) => {
@@ -38,19 +44,32 @@ function Login({
               onChange={(event, data) => populateFilds(event, data)}
               name="mobileNumber"
             />
-            {verficationSent &&
-            <Form.Input
-              fluid
-              icon="key"
-              iconPosition="left"
-              placeHolder="Enter Your Code"
-              value={verificationCode}
-              onChange={(e, data) => populateFilds(e, data)}
-              name="verificationCode"
-            />}
-            <Button color="teal" fluid size="large" onClick={!verficationSent ? sendSmsCode : sentVerificationCode}>
-              {verficationSent ? "Login" : "Send Verification code"}
-            </Button>
+            {verificationSent && (
+              <Form.Input
+                fluid
+                icon="key"
+                iconPosition="left"
+                placeholder="Enter Your Code"
+                value={verificationCode}
+                onChange={(e, data) => populateFilds(e, data)}
+                name="verificationCode"
+              />
+            )}
+
+            {verificationSent ? (
+              <Button color="teal" fluid size="large" onClick={sentVerificationCode}>
+                Login
+              </Button>
+            ) : (
+              <Button
+                color="teal"
+                fluid
+                size="large"
+                onClick={sendSmsCode}
+              >
+                Send Verification code
+              </Button>
+            )}
           </Segment>
         </Form>
       </Grid.Column>
@@ -59,16 +78,16 @@ function Login({
 }
 
 // Define PropTypes for Login component
-Login.propTypes = {
-  user: PropTypes.shape({
-    username: PropTypes.string,
-    mobileNumber: PropTypes.string,
-    verificationCode: PropTypes.string,
-    verficationSent: PropTypes.bool,
-    sentVerificationCode: PropTypes.func,
-  }),
-  setUser: PropTypes.func.isRequired,
-  sendSmsCode: PropTypes.func.isRequired,
-};
+// Login.propTypes = {
+//   user: PropTypes.shape({
+//     username: PropTypes.string,
+//     mobileNumber: PropTypes.string,
+//     verificationCode: PropTypes.string,
+//     verificationSent: PropTypes.bool,
+//     sentVerificationCode: PropTypes.func,
+//   }),
+//   setUser: PropTypes.func.isRequired,
+//   sendSmsCode: PropTypes.func.isRequired,
+// };
 
 export default Login;
