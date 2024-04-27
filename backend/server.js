@@ -1,24 +1,26 @@
 const dotenv = require('dotenv').config();
 const express = require('express');
 const app = express();
-const cors = require('cors')
+const cors = require('cors');
 const port = process.env.PORT || 3001;
 let bodyParser = require("body-parser");
 app.use(bodyParser.json()); // support json encoded bodies
-app.use(express.json())
-app.use(cors())
-const http = require("http")
-const socketIo = require("socket.io")
-
-const server = http.createServer(app)
-const socket = socketIo(server)
-
-socket.on('connection', (socket) =>{
-  console.log('Socket connected',  socket.id);
-})
-
-
+app.use(express.json());
+app.use(cors());
+const http = require("http");
+const socketIo = require("socket.io");
 const Twilio = require('./Twilio'); // Assuming Twilio.js is in the same directory
+
+const server = http.createServer(app);
+const io = socketIo(server); // Change variable name to io for clarity
+
+io.on('connection', (socket) =>{
+  console.log('Socket connected',  socket.id);
+});
+
+io.on('disconnect', (reason, details) => {
+    console.log(`Client disconnected: ${details}`);
+});
 
 const twilioInstance = new Twilio(); // Create an instance of the Twilio class
 
@@ -46,7 +48,7 @@ app.post('/verify', async (req, res)=>{
     console.error(error.message);
     return res.status(400).send({"error": "Invalid request."})
   }
-})
+});
 
 // Start the server
 server.listen(port, () => {
