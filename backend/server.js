@@ -7,6 +7,16 @@ let bodyParser = require("body-parser");
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(express.json())
 app.use(cors())
+const http = require("http")
+const socketIo = require("socket.io")
+
+const server = http.createServer(app)
+const socket = socketIo(server)
+
+socket.on('connection', (socket) =>{
+  console.log('Socket connected',  socket.id);
+})
+
 
 const Twilio = require('./Twilio'); // Assuming Twilio.js is in the same directory
 
@@ -39,7 +49,7 @@ app.post('/verify', async (req, res)=>{
 })
 
 // Start the server
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
