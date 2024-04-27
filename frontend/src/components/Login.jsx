@@ -78,16 +78,16 @@ function Login({
 }
 
 // Define PropTypes for Login component
-// Login.propTypes = {
-//   user: PropTypes.shape({
-//     username: PropTypes.string,
-//     mobileNumber: PropTypes.string,
-//     verificationCode: PropTypes.string,
-//     verificationSent: PropTypes.bool,
-//     sentVerificationCode: PropTypes.func,
-//   }),
-//   setUser: PropTypes.func.isRequired,
-//   sendSmsCode: PropTypes.func.isRequired,
-// };
+Login.propTypes = {
+  user: PropTypes.shape({
+    username: PropTypes.string,
+    mobileNumber: PropTypes.string,
+    verificationCode: PropTypes.string,
+    verificationSent: PropTypes.bool
+  }),
+  setUser: PropTypes.func.isRequired,
+  sendSmsCode: PropTypes.func.isRequired,
+  sentVerificationCode: PropTypes.func.isRequired,
+};
 
 export default Login;
