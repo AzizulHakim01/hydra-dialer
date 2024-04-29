@@ -30,8 +30,8 @@ class Twilio {
   async verifyCodeAsync (to, code){
     try{
 const data = await this.client.verify.v2.services(this.verify).verificationChecks.create({to, code});
-console.log('verify code: ',data)
-return
+console.log('verify code')
+return data;
     }
     catch(error){
       console.error('Error verifying the Code:', error);

@@ -2,17 +2,12 @@ import Login from "../components/Login";
 import { useImmer } from "use-immer";
 import instance from "../utils/Axios";
 import { message } from "antd";
-import { useEffect } from "react";
-import socket from "../utils/Socketio";
+import { useState } from "react";
+import useLocalStorage from "../hooks/useLocalStorage";
+import CallCenter from "../components/CallCenter";
 
 function Homepages() {
-  useEffect(() => {
-    socket.on("disconnect", () => {
-      console.log("socket connection  disconnected");
-    });
-    return () => {};
-  }, []);
-
+  const [storedToken, setStoredToken] = useLocalStorage("token", null);
   const [user, setUser] = useImmer({
     username: "",
     mobileNumber: "",
@@ -43,19 +38,27 @@ function Homepages() {
     const res = await instance.post("/verify", {
       to: user.mobileNumber,
       code: user.verificationCode,
+      username: user.username,
     });
-    console.log("verification response: ", res.data);
+    console.log("recieved token", res.data.token);
+    setStoredToken(res.data.token);
   }
 
   return (
-    <div>
-      <Login
-        user={user} // pass the user object or its properties as needed
-        setUser={setUser} // pass the setUser function
-        sendSmsCode={sendSmsCode} // pass a function that sends an sms code
-        sentVerificationCode={sentVerificationCode}
-      />
-    </div>
+    <>
+      {!storedToken ? (
+        <CallCenter/>
+      ) : (
+        <div>
+          <Login
+            user={user} // pass the user object or its properties as needed
+            setUser={setUser} // pass the setUser function
+            sendSmsCode={sendSmsCode} // pass a function that sends an sms code
+            sentVerificationCode={sentVerificationCode}
+          />
+        </div>
+      )}
+    </>
   );
 }
 

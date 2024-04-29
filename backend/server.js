@@ -7,6 +7,7 @@ let bodyParser = require("body-parser");
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(express.json());
 app.use(cors());
+const jwt = require('./utils/Jwt')
 const http = require("http");
 const socketIo = require("socket.io");
 const Twilio = require('./Twilio'); // Assuming Twilio.js is in the same directory
@@ -15,12 +16,13 @@ const server = http.createServer(app);
 const io = socketIo(server); // Change variable name to io for clarity
 
 io.on('connection', (socket) =>{
-  console.log('Socket connected',  socket.id);
+  console.log('Socket connected: ',  socket.id);
+  socket.on('disconnect', () => {
+    console.log(`Client disconnected:`, socket.id);
+});
 });
 
-io.on('disconnect', (reason, details) => {
-    console.log(`Client disconnected: ${details}`);
-});
+
 
 const twilioInstance = new Twilio(); // Create an instance of the Twilio class
 
@@ -30,7 +32,7 @@ app.post('/login', async (req, res) => {
   const {to, username, channel} = req.body;
   try {
     const data = await twilioInstance.sendVerifyAsync(to, channel);
-    res.send(data);
+    res.send('sent code');
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).send('Error sending verification');
@@ -41,14 +43,23 @@ app.post('/login', async (req, res) => {
 app.post('/verify', async (req, res)=>{
   try {
     console.log("verification on process: ")
-    const {to, code} = req.body;
+    const {to, code, username} = req.body;
     const data = await twilioInstance.verifyCodeAsync(to, code);
-    res.send(data);
+    if(data.status === 'approved'){
+      const token = jwt.createJwt(username)
+      return res.send({token});
+    }
+    res.status(401).send('Invalid OTP');
   } catch (error) {
     console.error(error.message);
     return res.status(400).send({"error": "Invalid request."})
   }
 });
+
+//test route
+app.get("/test",  (req,res) => {
+  res.json({ message : "It works!" })
+})
 
 // Start the server
 server.listen(port, () => {
