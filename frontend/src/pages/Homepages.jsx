@@ -54,7 +54,7 @@ function Homepages() {
             user={user} // pass the user object or its properties as needed
             setUser={setUser} // pass the setUser function
             sendSmsCode={sendSmsCode} // pass a function that sends an sms code
-            sentVerificationCode={sentVerificationCode}
+            sentVerificationCode={sentVerificationCode} // Verify the code
           />
         </div>
       )}
